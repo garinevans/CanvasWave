@@ -5,8 +5,16 @@ require(["js/app/helpers/wave"], function(){
 	
 	var wave;
 
+	var canvas = document.querySelector("#myCanvas");
+	var parent = canvas.parentNode;
+	canvas.width = parent.offsetWidth;
+	window.addEventListener("resize", function(){
+		canvas.width = parent.offsetWidth;
+		//TODO: update and slow down the wave here
+	});
+
 	function renderWave(){
-		var canvas = document.querySelector("#myCanvas");
+		
 		if(!canvas.getContext)
 			return;
 
@@ -16,19 +24,11 @@ require(["js/app/helpers/wave"], function(){
 		//wave.test(context, left);		
 		wave.run(context);		
 
-		adjustLeft();
-
 		//this should be checked. requestAnimationFrame has different implementations in each browser
 		window.requestAnimationFrame(renderWave);
 	}
 
 	window.requestAnimationFrame(renderWave);
-
-	function adjustLeft(){
-		left += 1;
-	}
-
-	var left = 0;
 
 });
 
