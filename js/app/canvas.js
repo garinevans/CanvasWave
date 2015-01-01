@@ -1,5 +1,4 @@
 
-//(function(){
 
 require(["js/app/helpers/wave"], function(){
 	
@@ -13,16 +12,15 @@ require(["js/app/helpers/wave"], function(){
 		//TODO: update and slow down the wave here
 	});
 
+	var context = canvas.getContext("2d");
+	if(!canvas.getContext) return;
+	Glug.Wave.context = context;
+
+	Glug.Wave.setDrawingArea(new Glug.DrawingArea(canvas.width, canvas.height));
+
 	function renderWave(){
-		
-		if(!canvas.getContext)
-			return;
-
-		var context = canvas.getContext("2d");
-
-		wave = wave || new Glug.Wave(new Glug.DrawingArea(canvas.width, canvas.height));
-		//wave.test(context, left);		
-		wave.run(context);		
+			
+		Glug.Wave.run();
 
 		//this should be checked. requestAnimationFrame has different implementations in each browser
 		window.requestAnimationFrame(renderWave);
@@ -31,6 +29,3 @@ require(["js/app/helpers/wave"], function(){
 	window.requestAnimationFrame(renderWave);
 
 });
-
-//})();
-
