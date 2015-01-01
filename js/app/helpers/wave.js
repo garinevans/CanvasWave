@@ -1,7 +1,7 @@
 var Glug = Glug || {};
 
 Glug.Config = {
-	drawWirefreame: false
+	drawWireframe: false
 };
 
 Glug.DrawingArea = function (w,h){
@@ -15,7 +15,7 @@ Glug.Wave = (function(){
 		//angle of first rotation
 		angle: 0,
 		//the height of the wave
-		radius: 100,
+		radius: 80,
 		//center y position of each circle
 		cy: 300,
 		//bottom of our wave
@@ -27,7 +27,15 @@ Glug.Wave = (function(){
 		//right most position
 		right: 0,
 		//calculated based on distance between points and canvas.width
-		numberOfPoints: 0
+		numberOfPoints: 0,
+		//the stroke colour
+		strokeColour: "black",
+		//the fill Colour
+		fillColour: "#9AE2FF",
+		//the amount to increment each points angle - effectively the speed of the wave
+		angleIncrement: 1,
+		//the swell - the lower the number is the larger the swell
+		swell: 20
 	};
 
 	//private methods
@@ -71,36 +79,37 @@ Glug.Wave = (function(){
 		context: null,
 
 		run: function(context) {
-			this.context.clearRect(0, 0, this.drawingArea.width, this.drawingArea.height);
+			var thisWave = this;
 
-			this.context.strokeStyle = "black";
-			this.context.fillStyle = "#9AE2FF";
+			thisWave.context.clearRect(0, 0, thisWave.drawingArea.width, thisWave.drawingArea.height);
+
+			thisWave.context.strokeStyle = constants.strokeColour;
+			thisWave.context.fillStyle = constants.fillColour;
 
 			var x = constants.startX;
 			var points = [];
 			
 			for(var i = 0; i < constants.numberOfPoints; i++){
-				var point = getPoint(constants.angle - i * 20, x);
+				var point = getPoint(constants.angle - i * constants.swell, x);
 				x += constants.distanceBetweenPoints;
 
 				points.push(point);
 			}
 			
-			this.context.restore();
-			this.context.save();
-			this.context.beginPath();
+			thisWave.context.restore();
+			thisWave.context.save();
+			thisWave.context.beginPath();
 			var firstPoint = points[0];
 
 			var bottomLeft = {
 				x: firstPoint.x,
 				y: constants.startY
 			};
-			this.context.moveTo(bottomLeft.x, bottomLeft.y);
+			thisWave.context.moveTo(bottomLeft.x, bottomLeft.y);
 			
 			//draw the wave - connect the dots
-			var oThis = this;
 			points.forEach(function(point){
-				oThis.context.lineTo(point.x, point.y);
+				thisWave.context.lineTo(point.x, point.y);
 			});
 
 			var lastPoint = points[points.length - 1];
@@ -108,20 +117,12 @@ Glug.Wave = (function(){
 				x: lastPoint.x,
 				y: constants.startY
 			}
-			this.context.lineTo(bottomRight.x, bottomRight.y);
+			thisWave.context.lineTo(bottomRight.x, bottomRight.y);
 
-			this.context.stroke();
-			this.context.fill();
+			thisWave.context.stroke();
+			thisWave.context.fill();
 
-			if(Glug.Config.drawWirefreame){
-				//draw the wireframe
-				var wave = this;
-				points.forEach(function(point){
-					wave.drawPoint(this.context, point);
-				});
-			}
-
-			constants.angle += 1;
+			constants.angle += constants.angleIncrement;
 
 		}
 
